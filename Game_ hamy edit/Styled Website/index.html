@@ -47,6 +47,7 @@
         frames=0,
         fg_posX=0,
         fg_posY=0,
+        bg_posX=0,
         txtStr,
         
         NB,
@@ -118,7 +119,7 @@
                 /*if current state is splash n=10 */
                 var n = currentstate ==states.Splash ? 10 : 5;
                 /* if frame mod n is = zero increment else keep at current frame  */
-                this.frame+= frames %n === 0? 1:0;
+                this.frame += frames %n === 0? 1:0;
                 this.frame %= this.idle.length;
                 
 
@@ -145,17 +146,23 @@
                 this.velX *= this.friction;
              
                 this.velY += this.gravity;
-             
-                this.x += this.velX;
+
+               /*  HERO MOVEMENT ON SCREEN*/
+               /*  COMMENTING THIS OUT FOR NOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                this.x += this.velX;*/
                 this.y += this.velY;
-             
+
+
+                /*  LEFT AND RIGHT BOUND CHECKING TO KEEP HERO ON SCREEN*/
+
+                /*  WE AREN'T MOVING X POS RIGHT NOW SO THIS IS NOT NEEDED!!!!!!!!!!!!!!!!!
                 if (this.x >= width-(2*this.width)) {
                     this.x = width-(2*this.width);
                 } else if (this.x <= 0+this.width) {         
                     this.x = 0+this.width;     
                 }
                 
-                
+                */
               
                 
                 /*added stuff end*/
@@ -176,53 +183,17 @@
             }
             
             
-        },/*bird end*/
-        
-        
-        
-        pipes ={
-        
-        _pipes:[],
-    
-       update:function(){
-            if(frames % 100 == 0){
-                var _y = height - (s_pipeSouth.height + s_fg.height + 120 + 200*Math.random());
-                this._pipes.push({
-                    x:500,
-                    y: _y,
-                    width: s_pipeSouth.width,
-                    height: s_pipeSouth.height
-                });
-                for (var i = 0, len = this._pipes.length; i <len; i++){
-                    var p = this._pipes[i];
-                    
-                    p.x -= 2;
-                    if (p.x <-50){
-                        this._pipes.splice(i,1);
-                        i--;
-                        len--;
-                    }
-                }
-            }
-           
-       },  
-       
-       
-       draw: function(ctx){
-           for (var i = 0, len = this._pipes.length; i <len; i++){
-                var p = this._pipes[i];
-                s_pipeSouth.draw(ctx, p.x, p.y);
-               
-            } 
-        }
-            
-    };
-        
-        
-        
+        };/*bird end*/
 
-        
-        
+
+
+
+
+
+
+
+
+
         function main(){
             canvas = document.createElement("canvas");
             width= window.innerWidth;
@@ -270,16 +241,27 @@
         function update(){
             frames++;
             /*set bounds*/
+            /*EAST BOUND*/
             EB = 0;
+            /*WEST BOUND*/
             WB = 0;
+            /*SOUTH BOUND*/
     	    SB= height - (s_fg.height + bird.height);
+    	    /*NORTH BOUND*/
     	    NB= 0 -height;
-    	    
-    	    pipes.update();
+
+
+
             bird.update();
             
-            /*move foreground*/
+            /*MOVE FOREGROUND*/
             fg_posX = (fg_posX - bird.velX)% 14;
+
+
+            /*move background slowly*/
+            /*one tenth hero velocity*/
+            bg_posX = (bg_posX - bird.velX/10);
+
             
             
             
@@ -296,12 +278,14 @@
             /*background x:fg_posX, y:fg_posY*/
             ctx.fillStyle=s_bg.color; 
             ctx.fillRect(0,0,width,height);
+
+
+            /*s_bg.draw(ctx, 0, height-s_bg.height);*/
+            s_bg.draw(ctx, bg_posX, height-s_bg.height);
+            s_bg.draw(ctx, bg_posX+s_bg.width, height-s_bg.height);
+            s_bg.draw(ctx, bg_posX-s_bg.width, height-s_bg.height);
             
-            s_bg.draw(ctx, 0, height-s_bg.height);
-            s_bg.draw(ctx, s_bg.width, height-s_bg.height); 
-           
-            
-             pipes.draw(ctx);
+
 
             /*draw done in bird 'struct'*/
             bird.draw(ctx);
@@ -309,7 +293,7 @@
           /*foreground x:fg_posX, y:fg_posY */
           s_fg.draw(ctx, fg_posX, height-s_fg.height);
           s_fg.draw(ctx, fg_posX+s_fg.width, height-s_fg.height);
-          
+          s_fg.draw(ctx, fg_posX-s_fg.width, height-s_fg.height);
          
             
            
