@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="15445ad9-ba65-424c-8ca0-0b6495a69ded" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Game_ hamy edit/index.html" afterPath="$PROJECT_DIR$/Game_ hamy edit/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Game_ hamy edit/Styled Website/index.html" afterPath="$PROJECT_DIR$/Game_ hamy edit/Styled Website/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Game_ hamy edit/Styled Website/sprite.js" afterPath="$PROJECT_DIR$/Game_ hamy edit/Styled Website/sprite.js" />
-    </list>
+    <list default="true" id="15445ad9-ba65-424c-8ca0-0b6495a69ded" name="Default" comment="" />
     <ignored path="Game-_hamy_edit_-2015-05-28.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -28,8 +24,8 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Game_ hamy edit/Styled Website/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.7268519">
-              <caret line="146" column="12" selection-start-line="146" selection-start-column="12" selection-end-line="146" selection-end-column="12" />
+            <state vertical-scroll-proportion="0.6886574">
+              <caret line="35" column="32" selection-start-line="35" selection-start-column="32" selection-end-line="35" selection-end-column="32" />
               <folding />
             </state>
           </provider>
@@ -488,8 +484,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Game_ hamy edit/Styled Website/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7268519">
-          <caret line="146" column="12" selection-start-line="146" selection-start-column="12" selection-end-line="146" selection-end-column="12" />
+        <state vertical-scroll-proportion="0.6886574">
+          <caret line="35" column="32" selection-start-line="35" selection-start-column="32" selection-end-line="35" selection-end-column="32" />
           <folding />
         </state>
       </provider>
