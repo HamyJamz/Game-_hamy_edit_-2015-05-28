@@ -48,6 +48,10 @@
         fg_posX=0,
         fg_posY=0,
         bg_posX=0,
+
+        lastkeyPress=0,
+        timeDif=1000,
+
         txtStr,
         
         NB,
@@ -59,8 +63,57 @@
         currentstate,
         
         states = {
-            Title:0, Splash:1, Intro:2, Tutorial:3, World1:4, World2:5, Space:6, Pause:7
+            Title:0, Splash:1, Intro:2, Tutorial:3, World1:4, World2:5, Space:6, Pause:7, GameOver:8
         },
+
+
+
+
+        pipes = {
+
+        _pipes:[],
+
+        reset:function(){
+            this._pipes =[];
+        },
+
+        update:function(){
+            /*ever hundred frames push a new object to array*/
+
+            if( frames % 100 == 0 && bird.velX >0){
+
+                var _y = height - (s_pipeSouth.height + s_fg.height + 120 + 200*Math.random());
+                this._pipes.push({
+                    x:fg_posX+500,
+                    y: _y,
+                    width: s_pipeSouth.width,
+                    height: s_pipeSouth.height
+                });
+            }
+            for (var i = 0, len = this._pipes.length; i <len; i++){
+                var p = this._pipes[i];
+
+                /*speed pipes move by*/
+                /*only move pipe when bird moves*/
+                p.x -= bird.velX;
+
+                /*if pipe goes too far off screen remove it from the array*/
+                if (p.x <-50){
+                    this._pipes.splice(i,1);
+                    i--;
+                    len--;
+                }
+            }
+        },
+
+        draw: function(ctx){
+           for (var i = 0, len = this._pipes.length; i <len; i++){
+                var p = this._pipes[i];
+                s_pipeSouth.draw(ctx, p.x, p.y);
+                s_pipeNorth.draw(ctx, p.x, p.y+80+p.height);
+            }
+        }
+    },/*pipes end*/
         
         
         bird = {
@@ -70,7 +123,8 @@
             */
             height:24,
             width:34,
-            
+
+            posX:100,
             x: 100,
             y: 480 ,
             
@@ -84,7 +138,8 @@
             
             frame: 0,
             idle: [0,1,2,1],
-            jumping: false,
+            jumping1: false,
+            jumping2: false,
             FacingL: false,
             FacingR: true,
             RunR: false,
@@ -96,7 +151,7 @@
             moveRight:function(){
                 this.velX++;    
                
-                console.log("RIGHT");
+                /*console.log("RIGHT");*/
             },
             
             moveLeft:function(){
@@ -104,20 +159,31 @@
 
                 this.facingR = false;
                 this.facingL = true;
-                console.log("LEFT");
+                /*console.log("LEFT");*/
             },
-            
+
+            doubleJump:function(){
+                if(!this.jumping2){
+
+                    this.velY = -(this._jump/2);
+                    console.log("2nd jump");
+                }
+            },
+
             jump:function(){
-                if(!this.jumping){
-                   this.jumping = true;
-                   this.velY = -this._jump;
-                   
-                 }
+                if(!this.jumping1){
+
+                    this.velY = -this._jump;
+                    console.log("1st jump");
+                }
+
+
             },
-            
+
             update: function(){
                 /*if current state is splash n=10 */
                 var n = currentstate ==states.Splash ? 10 : 5;
+
                 /* if frame mod n is = zero increment else keep at current frame  */
                 this.frame += frames %n === 0? 1:0;
                 this.frame %= this.idle.length;
@@ -125,9 +191,31 @@
 
                 /*added stuff */
                 // check keys
+
                 if (keys[38] || keys[32]) {
                     // up arrow or space
+                    var keyPress = new Date();
+
+                    if(!this.jumping1)
+                    {
+                        this.jumping1=true;
                         this.jump();
+                    }
+
+                     if ( keyPress - lastkeyPress <= timeDif )
+                     {
+                        if(!this.jumping2)
+                        {
+                            this.jumping2=true;
+                            this.doubleJump();
+                        }
+
+                        // optional - if we'd rather not detect a triple-press
+                        // as a second double-press, reset the timestamp
+                        setTimeout(function(){ keyPress = 0; this.jumping1=false; this.jumping2=false; }, 3000);
+                     }
+                     lastkeyPress = keyPress;
+
                 }
                 if (keys[39]) {
                     // right arrow
@@ -148,21 +236,12 @@
                 this.velY += this.gravity;
 
                /*  HERO MOVEMENT ON SCREEN*/
-               /*  COMMENTING THIS OUT FOR NOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                this.x += this.velX;*/
+
+                this.x += this.velX;
                 this.y += this.velY;
 
 
-                /*  LEFT AND RIGHT BOUND CHECKING TO KEEP HERO ON SCREEN*/
 
-                /*  WE AREN'T MOVING X POS RIGHT NOW SO THIS IS NOT NEEDED!!!!!!!!!!!!!!!!!
-                if (this.x >= width-(2*this.width)) {
-                    this.x = width-(2*this.width);
-                } else if (this.x <= 0+this.width) {         
-                    this.x = 0+this.width;     
-                }
-                
-                */
               
                 
                 /*added stuff end*/
@@ -170,7 +249,8 @@
                 //if at bottom go no further 
                 if(this.y >= SB){
                     this.y=SB;
-                    this.jumping = false;
+                    this.jumping1 = false;
+                    this.jumping2 = false;
                 }
                 
             },
@@ -178,20 +258,13 @@
             draw: function(ctx){
                 ctx.save();
                 var n = this.idle[this.frame];
-                s_bird[n].draw(ctx, this.x, this.y);    
+                s_bird[n].draw(ctx, this.posX, this.y);
+                /*console.log("Bird X: "+this.x);*/
                 ctx.restore();
             }
             
             
         };/*bird end*/
-
-
-
-
-
-
-
-/*small change with IDE after GIT link was fixed*/
 
 
         function main(){
@@ -240,6 +313,7 @@
         
         function update(){
             frames++;
+
             /*set bounds*/
             /*EAST BOUND*/
             EB = 0;
@@ -251,11 +325,13 @@
     	    NB= 0 -height;
 
 
+            pipes.update();
 
             bird.update();
-            
+
             /*MOVE FOREGROUND*/
             fg_posX = (fg_posX - bird.velX)% 14;
+
 
 
             /*move background slowly*/
@@ -286,9 +362,14 @@
             s_bg.draw(ctx, bg_posX-s_bg.width, height-s_bg.height);
             
 
+            pipes.draw(ctx);
 
             /*draw done in bird 'struct'*/
             bird.draw(ctx);
+
+
+
+
             
           /*foreground x:fg_posX, y:fg_posY */
           s_fg.draw(ctx, fg_posX, height-s_fg.height);

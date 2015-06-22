@@ -46,6 +46,7 @@ function initSprites(img) {
 	
 	s_fg = new Sprite(img, 138, 0, 112,  56, true);
 	
-	s_pipeSouth = new Sprite(img, 277, 0, 26, 200, true);
+	s_pipeNorth = new Sprite(img, 251, 0, 26, 200, true);
+    s_pipeSouth = new Sprite(img, 277, 0, 26, 200, true);
 	
 }
